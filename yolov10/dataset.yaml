@@ -1,0 +1,8 @@
+names:
+  0: empty
+  1: filled
+nc: 2
+path: c:\Users\Evaldo Raynardi\OneDrive\Desktop\Kuilah\Semester 4\Machine Learning\testing\YOLO-Parking-Spot-Rombak\yolov10\data
+test: c:\Users\Evaldo Raynardi\OneDrive\Desktop\Kuilah\Semester 4\Machine Learning\testing\YOLO-Parking-Spot-Rombak\yolov10\data\test/images
+train: c:\Users\Evaldo Raynardi\OneDrive\Desktop\Kuilah\Semester 4\Machine Learning\testing\YOLO-Parking-Spot-Rombak\yolov10\data\train/images
+val: c:\Users\Evaldo Raynardi\OneDrive\Desktop\Kuilah\Semester 4\Machine Learning\testing\YOLO-Parking-Spot-Rombak\yolov10\data\val/images

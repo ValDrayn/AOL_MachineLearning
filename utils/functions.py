@@ -39,8 +39,16 @@ YOLOV8_VERSIONS = [
     "yolov8x.pt",
 ]
 
+YOLOV10_VERSIONS = [
+    "yolov10n.pt",
+]
+
 YOLOV11_VERSIONS = [
     "yolo11n.pt",
+]
+
+YOLOV12_VERSIONS = [
+    "yolo12n.pt",
 ]
 
 # Function to check if a car is occupying a parking spot
