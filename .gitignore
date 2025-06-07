@@ -7,6 +7,7 @@
 # Python virtual environment files (e.g., created with virtualenv or venv)
 venv/
 env/
+temp/
 
 # Byte-compiled/optimized files
 __pycache__/
@@ -45,9 +46,6 @@ __pycache__/
 # todo
 todo.md
 
-# yolov5 clone
-yolov5/
-
 # yolov8
 yolov8/
 
@@ -60,8 +58,3 @@ backup/
 # heavy models
 models/*m.pt
 models/*l.pt
-
-# test runs
-runs
-videos
-internet_videos

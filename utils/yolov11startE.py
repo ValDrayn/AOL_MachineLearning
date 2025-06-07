@@ -1,7 +1,7 @@
 import os
 import shutil
 import yaml
-from functions import only_car_label, parse_opt
+from functions import parse_opt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -26,7 +26,7 @@ def copy_data_to_yolov11(repo_path, yolov11_path):
 
     # Salin folder data
     shutil.copytree(src_data_path, dst_data_path)
-    print(f"Data copied to {dst_data_path} ✅")
+    print(f"Data copied to {dst_data_path}")
 
     # Salin dataset.yaml
     shutil.copyfile(os.path.join(dst_data_path, 'dataset.yaml'), os.path.join(yolov11_path, 'dataset.yaml'))
@@ -43,12 +43,6 @@ def main(opt):
     print(f"Yolo path: {yolov11_path}")
 
     copy_data_to_yolov11(repo_path, yolov11_path)
-
-    # # Jalankan only_car_label di semua split
-    # for split in ['train', 'val', 'test']:
-    #     labels_path = os.path.join(yolov11_path, 'data', split, 'labels')
-    #     if os.path.exists(labels_path):
-    #         only_car_label(labels_path)
 
 if __name__ == '__main__':
     opt = parse_opt()

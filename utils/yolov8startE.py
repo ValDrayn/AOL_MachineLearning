@@ -1,7 +1,7 @@
 import os
 import shutil
 import yaml
-from functions import only_car_label, parse_opt
+from functions import parse_opt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -43,12 +43,6 @@ def main(opt):
     print(f"Yolo path: {yolov8_path}")
 
     copy_data_to_yolov8(repo_path, yolov8_path)
-
-    # # Jalankan only_car_label di semua split
-    # for split in ['train', 'val', 'test']:
-    #     labels_path = os.path.join(yolov8_path, 'data', split, 'labels')
-    #     if os.path.exists(labels_path):
-    #         only_car_label(labels_path)
 
 if __name__ == '__main__':
     opt = parse_opt()
