@@ -6,6 +6,7 @@ import cv2
 import os
 import shutil
 import argparse
+from typing import List
 
 from PIL import Image
 
@@ -210,126 +211,11 @@ def is_custom_model(model: str, yoloversion: str):
 
     return model, model_path
 
-
-from typing import List
-
-def split_dataset(data_path: str, train_size: float = 0.8):
-    # lets put all the train.txt and val.txt info into a list
-    full_list = []
-    train_list = []
-    val_list = []
-    
-    # Get the names of the files in image folder
-    for file in os.listdir(os.path.join(data_path, 'fold_0/images')):
-        # Appends the path of the image to the list
-        if file.endswith('.jpg'):
-            full_list.append('./images/' + file + '\n')
-
-    # Shuffle the list
-    np.random.shuffle(full_list)
-
-    # Split the list into train and val lists
-    train_size = int(len(full_list) * train_size)
-    train_list = full_list[:train_size]
-    train_list_rotated = [x.replace('.jpg', '_rotated.jpg') for x in train_list]
-    train_list_rotated2 = [x.replace('.jpg', '_rotated2.jpg') for x in train_list]
-
-    val_list = full_list[train_size:]
-    val_list_rotated = [x.replace('.jpg', '_rotated.jpg') for x in val_list]
-    val_list_rotated2 = [x.replace('.jpg', '_rotated2.jpg') for x in val_list]
-
-    # Write the train.txt file to fold 0
-    with open(os.path.join(data_path, 'fold_0/train.txt'), 'w') as f:
-        f.writelines(train_list)
-        f.writelines(train_list_rotated)
-        f.writelines(train_list_rotated2)
-
-    # Write the val.txt file to fold 0
-    with open(os.path.join(data_path, 'fold_0/val.txt'), 'w') as f:
-        f.writelines(val_list)
-
-    # Write the train.txt file to fold 1
-    with open(os.path.join(data_path, 'fold_1/train.txt'), 'w') as f:
-        f.writelines(val_list)
-        f.writelines(val_list_rotated)
-        f.writelines(val_list_rotated2)
-
-    # Write the val.txt file to fold 1
-    with open(os.path.join(data_path, 'fold_1/val.txt'), 'w') as f:
-        f.writelines(train_list)
-
-    print(f"Dataset split into train and val sets ✅")
-
-def only_car_label(labels_path):
-    # Loop over all labels
-    for file in os.listdir(labels_path):
-        if file.endswith('.txt'):
-            with open(os.path.join(labels_path, file), 'r+') as f:
-                # I want to delete all lines that do not start with 0
-                lines = f.readlines()
-                f.seek(0)  # Go back to the beginning of the file
-                for line in lines:
-                    if line.startswith('1'):
-                        f.write(line)
-
-                f.truncate()  # Remove extra lines, if any
-                    
-    print(f"Only car labels left ✅")
-
-
-# Rotate images for data augmentation
-def rotate_image_and_bboxes(image, bboxes, angle):
-    height, width = image.shape[:2]
-    center = (width // 2, height // 2)
-
-    # Get the rotation matrix
-    rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
-
-    # Rotate the image
-    rotated_image = cv2.warpAffine(image, rotation_matrix, (width, height))
-
-    # Update the coordinates of the bounding boxes
-    rotated_bboxes = []
-    for bbox in bboxes:
-        class_name, cx, cy, bbox_width, bbox_height = bbox
-
-        # Convert to absolute coordinates
-        x_min = int((cx - bbox_width / 2) * width)
-        y_min = int((cy - bbox_height / 2) * height)
-        x_max = int((cx + bbox_width / 2) * width)
-        y_max = int((cy + bbox_height / 2) * height)
-
-        # Rotate the coordinates
-        rotated_bbox = cv2.transform(np.array([[[x_min, y_min], [x_max, y_min], [x_min, y_max], [x_max, y_max]]]), rotation_matrix)[0]
-        x_min_rot, y_min_rot = np.min(rotated_bbox, axis=0)
-        x_max_rot, y_max_rot = np.max(rotated_bbox, axis=0)
-
-        # Convert back to relative coordinates
-        x_min_rot_rel = x_min_rot / width
-        y_min_rot_rel = y_min_rot / height
-        x_max_rot_rel = x_max_rot / width
-        y_max_rot_rel = y_max_rot / height
-
-        # Calculate the new center
-        new_cx = (x_min_rot_rel + x_max_rot_rel) / 2
-        new_cy = (y_min_rot_rel + y_max_rot_rel) / 2
-
-        # Calculate the new width and height
-        new_width = x_max_rot_rel - x_min_rot_rel
-        new_height = y_max_rot_rel - y_min_rot_rel
-
-        rotated_bboxes.append([class_name, new_cx, new_cy, new_width, new_height])
-
-    return rotated_image, rotated_bboxes
-
-
 def parse_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--reporoot', type=str, default=ROOT, help='path to repo root')
     opt = parser.parse_args()
     return opt
-
-
 
 def mean_df(df: pd.DataFrame):
     columns_to_mean = ['Precision', 'Recall', 'mAP0-50', 'mAP50-95']
