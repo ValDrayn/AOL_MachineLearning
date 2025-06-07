@@ -46,9 +46,7 @@ YOLOV12_VERSIONS = [
     "yolo12n.pt",
 ]
 
-
-# Penyesuaian Annotation
-def draw_bounding_boxess(image_path, annotation_path, output_path, **kwargs): # Argumen lama tidak relevan lagi
+def draw_bounding_boxes(image_path, annotation_path, output_path, **kwargs):
 
     image = cv2.imread(image_path)
     
@@ -118,7 +116,6 @@ def draw_bounding_boxess(image_path, annotation_path, output_path, **kwargs): # 
     output_image_path = os.path.join(output_path, os.path.basename(image_path))
     cv2.imwrite(output_image_path, image)
 
-    # Buat DataFrame untuk hasil gambar ini
     results = pd.DataFrame({
         'Image File': [os.path.basename(image_path)],
         'Empty Spots': [empty_spots],
@@ -129,16 +126,16 @@ def draw_bounding_boxess(image_path, annotation_path, output_path, **kwargs): # 
     return results
 
 
-def process_labels_baru(data_path, new_labels_folder):
-    print(f"Menggunakan label langsung dari folder prediksi: {new_labels_folder}")
+def process_labels(data_path, new_labels_folder):
+    print(f"Location: {new_labels_folder}")
     
     if not os.path.exists(new_labels_folder):
-        raise FileNotFoundError(f"Folder label prediksi tidak ditemukan di: {new_labels_folder}")
+        raise FileNotFoundError(f"Not Found: {new_labels_folder}")
         
     return new_labels_folder
 
 
-def process_imagess(data_path: str, output_folder: str, model: str = ''): 
+def process_images(data_path: str, output_folder: str, model: str = ''): 
     processed_images = 0
 
     images_folder = os.path.join(data_path, 'images/')
@@ -153,7 +150,7 @@ def process_imagess(data_path: str, output_folder: str, model: str = ''):
         try: 
             print(f'Using labels from {new_labels_folder}')
 
-            labels_folder = process_labels_baru(data_path, new_labels_folder)
+            labels_folder = process_labels(data_path, new_labels_folder)
         except FileNotFoundError as e:
             print(e)
             print(
@@ -181,7 +178,7 @@ def process_imagess(data_path: str, output_folder: str, model: str = ''):
         annotation_path = os.path.join(labels_folder, annotation_file)
         
         if os.path.exists(annotation_path):
-            results = draw_bounding_boxess(image_path, annotation_path, output_images_folder)
+            results = draw_bounding_boxes(image_path, annotation_path, output_images_folder)
             processed_images += 1
             results_df = pd.concat([results_df, results], ignore_index=True)
         else:
