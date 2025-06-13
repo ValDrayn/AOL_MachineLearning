@@ -15,23 +15,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 YOLOV5_VERSIONS = [
     "yolov5n.pt",
-    "yolov5s.pt",
-    "yolov5m.pt",
-    "yolov5l.pt",
-    "yolov5x.pt",
-    "yolov5n6.pt",
-    "yolov5s6.pt",
-    "yolov5m6.pt",
-    "yolov5l6.pt",
-    "yolov5x6.pt"
 ]
 
 YOLOV8_VERSIONS = [
     "yolov8n.pt",
-    "yolov8s.pt",
-    "yolov8m.pt",
-    "yolov8l.pt",
-    "yolov8x.pt",
 ]
 
 YOLOV10_VERSIONS = [
@@ -193,7 +180,13 @@ def is_custom_model(model: str, yoloversion: str):
     if not model.endswith(".pt"):
         model = model + ".pt"
 
-    versions = YOLOV11_VERSIONS if yoloversion == "11" else YOLOV8_VERSIONS
+    YOLO_VERSIONS = {
+        "8": YOLOV8_VERSIONS,
+        "11": YOLOV11_VERSIONS,
+        "12": YOLOV12_VERSIONS
+    }
+
+    versions = YOLO_VERSIONS.get(yoloversion, YOLOV8_VERSIONS)
 
     if not model in versions:
         if model.__contains__("/") or model.__contains__("\\"):
